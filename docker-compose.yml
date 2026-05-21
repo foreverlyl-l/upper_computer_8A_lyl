@@ -1,0 +1,73 @@
+name: access-console
+
+x-backend-env: &backend-env
+  ENVIRONMENT: development
+  DEBUG: "false"
+  ENABLE_DOCS: "true"
+  DATABASE_URL: sqlite:////data/access_control.db
+  SECRET_KEY: local-docker-secret-key-change-before-sharing-12345
+  CORS_ORIGINS: '["http://localhost:5500","http://127.0.0.1:5500"]'
+  ALLOWED_HOSTS: '["localhost","127.0.0.1","backend"]'
+  ADMIN_TOTP_SECRET: JBSWY3DPEHPK3PXP
+  ADMIN_TOTP_ISSUER: 智能门禁系统
+  AUTO_SEED_DEFAULT_USERS: "true"
+  SEED_ADMIN_USERNAME: admin
+  SEED_ADMIN_PASSWORD: admin-docker-pass-123
+  SEED_OPERATOR_USERNAME: operator
+  SEED_OPERATOR_PASSWORD: operator-docker-pass-123
+  ACCESS_TOKEN_EXPIRE_MINUTES: "30"
+  LOGIN_RATE_LIMIT_PER_MINUTE: "8"
+  LOGIN_LOCKOUT_SECONDS: "180"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: access-console-backend:local
+    restart: unless-stopped
+    environment: *backend-env
+    volumes:
+      - backend_data:/data
+    ports:
+      - "127.0.0.1:8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=5).read()"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  udp-listener:
+    image: access-console-backend:local
+    restart: unless-stopped
+    command: ["python", "net_build/udp_packet_listener.py"]
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment: *backend-env
+    volumes:
+      - backend_data:/data
+    ports:
+      - "9000:9000/udp"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: access-console-frontend:local
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "5500:80"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  backend_data:

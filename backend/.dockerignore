@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.env
+.env.*
+!.env.example
+!.env.cloud.example
+*.db
+*.sqlite
+*.sqlite3
+admin_totp_qr.png
+runtime_logs/
+uvicorn.out.log
+uvicorn.err.log

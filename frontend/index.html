@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Cache-Control" content="no-store" />
+    <title>智能门禁上位机</title>
+    <link rel="stylesheet" href="./styles.css?v=20260504k" />
+  </head>
+  <body>
+    <div class="bg-orb orb-a"></div>
+    <div class="bg-orb orb-b"></div>
+
+    <section id="entryShell" class="entry-shell">
+      <article class="entry-card">
+        <header class="entry-head">
+          <div class="brand-mark">AC</div>
+          <div>
+            <h1>Access Console</h1>
+            <p>智能门禁上位机 · 安全登录入口</p>
+          </div>
+        </header>
+
+        <div class="entry-anim">
+          <div class="entry-bars" id="entryBars">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <p id="entryPulseText">系统准备中</p>
+        </div>
+
+        <button id="startLoginBtn" class="action-btn entry-login-btn" data-tip="进入登录页" type="button">登录</button>
+      </article>
+    </section>
+
+    <section id="loginShell" class="auth-shell hidden">
+      <article class="auth-card auth-card-wide">
+        <header class="auth-head">
+          <div class="brand-mark">AC</div>
+          <div>
+            <h1>Access Console 登录</h1>
+            <p>请选择角色后登录系统</p>
+          </div>
+        </header>
+
+        <div class="login-role-tabs" id="loginRoleTabs">
+          <button class="role-tab active" data-role-target="admin" type="button">管理员</button>
+          <button class="role-tab" data-role-target="monitor" type="button">监视员</button>
+          <button class="role-tab" data-role-target="personal" type="button">个人登录</button>
+        </div>
+
+        <div class="login-stage">
+          <form id="adminLoginForm" class="auth-form role-login-form active" data-role="admin" data-role-label="管理员">
+            <h3>管理员</h3>
+            <label>用户名
+              <input id="adminUsername" type="text" autocomplete="username" placeholder="admin" required />
+            </label>
+            <label>密码
+              <div class="password-field">
+                <input id="adminPassword" type="password" autocomplete="current-password" placeholder="请输入密码" required />
+                <button class="password-toggle ghost-btn" type="button" data-tip="显示或隐藏密码">显示</button>
+              </div>
+            </label>
+            <label>动态口令
+              <input id="adminTotp" type="text" inputmode="numeric" maxlength="6" placeholder="请输入动态验证码" required />
+            </label>
+            <p id="adminLoginError" class="auth-error hidden"></p>
+            <button class="action-btn auth-submit" data-tip="管理员账号登录" type="submit">管理员登录</button>
+          </form>
+
+          <form id="monitorLoginForm" class="auth-form role-login-form hidden" data-role="monitor" data-role-label="监视员">
+            <h3>监视员</h3>
+            <label>用户名
+              <input id="monitorUsername" type="text" autocomplete="username" placeholder="operator" required />
+            </label>
+            <label>密码
+              <div class="password-field">
+                <input id="monitorPassword" type="password" autocomplete="current-password" placeholder="请输入密码" required />
+                <button class="password-toggle ghost-btn" type="button" data-tip="显示或隐藏密码">显示</button>
+              </div>
+            </label>
+            <p id="monitorLoginError" class="auth-error hidden"></p>
+            <button class="action-btn auth-submit" data-tip="监视员账号登录" type="submit">监视员登录</button>
+          </form>
+
+          <form id="personalLoginForm" class="auth-form role-login-form hidden" data-role="personal" data-role-label="个人">
+            <h3>个人登录</h3>
+            <label>用户名
+              <input id="personalUsername" type="text" autocomplete="username" placeholder="personal_user" required />
+            </label>
+            <label>密码
+              <div class="password-field">
+                <input id="personalPassword" type="password" autocomplete="current-password" placeholder="请输入密码" required />
+                <button class="password-toggle ghost-btn" type="button" data-tip="显示或隐藏密码">显示</button>
+              </div>
+            </label>
+            <p id="personalLoginError" class="auth-error hidden"></p>
+            <button class="action-btn auth-submit" data-tip="个人账号登录" type="submit">个人登录</button>
+          </form>
+        </div>
+
+        <p class="auth-hint">请按要求输入动态口令</p>
+      </article>
+    </section>
+
+    <div id="appShell" class="app-shell hidden">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">AC</div>
+          <div>
+            <h1>Access Console</h1>
+            <p>智能门禁上位机</p>
+          </div>
+        </div>
+
+        <section class="user-panel">
+          <p id="userDisplayName">未登录</p>
+          <span id="userRoleBadge" class="role-badge">访客</span>
+          <button id="logoutBtn" class="ghost-btn logout-btn" data-tip="退出当前账号">退出登录</button>
+        </section>
+
+        <nav class="nav">
+          <button class="nav-item active" data-view="dashboard" data-tip="切换到总览看板">总览看板</button>
+          <button class="nav-item" data-view="myActivity" data-tip="查看我的考勤和通行记录">我的考勤与通行记录</button>
+          <button class="nav-item" data-view="devices" data-tip="查看和管理门禁设备">设备管理</button>
+          <button class="nav-item" data-view="records" data-tip="查看通行记录与结果">通行记录</button>
+          <button class="nav-item" data-view="attendance" data-tip="查看考勤汇总和明细">考勤管理</button>
+          <button class="nav-item" data-view="settings" data-tip="配置串口和 Wi-Fi 参数">系统设置</button>
+        </nav>
+
+        <div class="side-foot">
+          <p>连接状态</p>
+          <span id="connectState" class="state ok">已连接</span>
+        </div>
+      </aside>
+
+      <main class="main-panel">
+        <header class="topbar">
+          <div>
+            <h2 id="pageTitle">总览看板</h2>
+            <p id="clock">--</p>
+          </div>
+        </header>
+
+        <section id="dashboard" class="view active">
+          <div class="panel-head dashboard-head">
+            <h4>今日概览</h4>
+            <button id="resetStatsBtn" class="ghost-btn" data-tip="仅重置今日通行和告警计数，不删除历史记录" type="button">重置计数</button>
+          </div>
+          <div class="stats-grid">
+            <article class="stat-card">
+              <p>在线设备</p>
+              <h3 id="onlineCount">0</h3>
+            </article>
+            <article class="stat-card">
+              <p>离线设备</p>
+              <h3 id="offlineCount">0</h3>
+            </article>
+            <article class="stat-card">
+              <p>今日通行</p>
+              <h3 id="passCount">0</h3>
+            </article>
+            <article class="stat-card warning">
+              <p>告警事件</p>
+              <h3 id="alarmCount">0</h3>
+            </article>
+          </div>
+
+          <div class="grid-2">
+            <section class="panel">
+              <div class="panel-head">
+                <h4>门点状态</h4>
+                <span class="sub">实时状态</span>
+              </div>
+              <div class="door-list" id="doorList"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <h4>实时事件流</h4>
+                <span class="sub">最近 10 条</span>
+              </div>
+              <ul class="event-list" id="eventList"></ul>
+            </section>
+          </div>
+        </section>
+
+        <section id="devices" class="view">
+          <section class="panel">
+            <div class="panel-head">
+              <h4>设备列表</h4>
+              <button id="addDeviceBtn" class="ghost-btn" data-tip="新增一个门禁设备">添加设备</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>设备ID</th>
+                    <th>门点</th>
+                    <th>连接状态</th>
+                    <th>连接方式</th>
+                    <th>固件</th>
+                    <th>最后记录</th>
+                  </tr>
+                </thead>
+                <tbody id="deviceTable"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <section id="records" class="view">
+          <section class="panel">
+            <div class="panel-head">
+              <h4>通行记录</h4>
+              <div class="chips">
+                <button class="chip active" data-tip="显示全部通行记录">全部</button>
+                <button class="chip" data-tip="仅显示放行记录">放行</button>
+                <button class="chip" data-tip="仅显示拒绝记录">拒绝</button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>时间</th>
+                    <th>设备</th>
+                    <th>通行者</th>
+                    <th>凭证</th>
+                    <th>结果</th>
+                    <th>原因</th>
+                  </tr>
+                </thead>
+                <tbody id="recordTable"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <section id="attendance" class="view">
+          <section class="panel">
+            <div class="panel-head">
+              <h4>考勤管理</h4>
+              <span class="sub">今日考勤汇总</span>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>姓名</th>
+                    <th>部门</th>
+                    <th>首次通行</th>
+                    <th>最后通行</th>
+                    <th>状态</th>
+                    <th>主要门点</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="attendanceTable"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+        <section id="myActivity" class="view">
+          <section class="panel">
+            <div class="panel-head">
+              <h4>我的考勤与通行记录</h4>
+              <span id="myActivityDate" class="sub">--</span>
+            </div>
+
+            <div class="my-activity-summary">
+              <article class="detail-metric">
+                <p>考勤状态</p>
+                <h5 id="myAttendanceStatus">--</h5>
+              </article>
+              <article class="detail-metric">
+                <p>首次通行</p>
+                <h5 id="myFirstIn">--</h5>
+              </article>
+              <article class="detail-metric">
+                <p>最后通行</p>
+                <h5 id="myLastOut">--</h5>
+              </article>
+              <article class="detail-metric">
+                <p>主要门点</p>
+                <h5 id="myMainGate">--</h5>
+              </article>
+            </div>
+
+            <div class="panel-head">
+              <h4>我的通行记录</h4>
+              <span class="sub">当日记录</span>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>时间</th>
+                    <th>设备</th>
+                    <th>凭证</th>
+                    <th>结果</th>
+                    <th>原因</th>
+                  </tr>
+                </thead>
+                <tbody id="myRecordTable"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+        <section id="deviceDetail" class="view">
+          <section class="panel">
+            <div class="panel-head">
+              <h4 id="deviceDetailTitle">设备详情</h4>
+              <button id="backToDevicesBtn" class="ghost-btn" data-tip="返回设备列表">返回设备管理</button>
+            </div>
+
+            <div class="detail-grid">
+              <article class="detail-metric">
+                <p>连接状态</p>
+                <h5 id="deviceDetailStatus">--</h5>
+              </article>
+              <article class="detail-metric">
+                <p>连接方式</p>
+                <h5 id="deviceDetailMode">--</h5>
+              </article>
+              <article class="detail-metric">
+                <p>最后心跳</p>
+                <h5 id="deviceDetailHeartbeat">--</h5>
+              </article>
+              <article class="detail-metric">
+                <p>今日放行</p>
+                <h5 id="deviceDetailTodayPass">0</h5>
+              </article>
+            </div>
+
+            <div class="device-action-row">
+              <button id="deviceManualOpenBtn" class="action-btn" data-tip="对当前设备下发开门命令">手动开门</button>
+              <span id="deviceOpenMessage" class="muted-note"></span>
+            </div>
+
+            <div class="panel-head">
+              <h4>该设备通行记录</h4>
+              <span class="sub" id="deviceDetailName">--</span>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>时间</th>
+                    <th>通行者</th>
+                    <th>凭证</th>
+                    <th>结果</th>
+                    <th>原因</th>
+                  </tr>
+                </thead>
+                <tbody id="deviceRecordTable"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <section id="settings" class="view">
+          <div class="grid-2">
+            <section class="panel">
+              <div class="panel-head">
+                <h4>串口配置</h4>
+              </div>
+              <div class="form-grid">
+                <label>串口
+                  <input type="text" value="未启用" disabled />
+                </label>
+                <label>波特率
+                  <input type="text" value="--" disabled />
+                </label>
+                <label>校验位
+                  <input type="text" value="--" disabled />
+                </label>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <h4>Wi-Fi 网关配置</h4>
+              </div>
+              <div class="form-grid">
+                <label>网关地址
+                  <input type="text" value="0.0.0.0" disabled />
+                </label>
+                <label>端口
+                  <input type="text" value="9000" disabled />
+                </label>
+                <label>离线判定(秒)
+                  <input type="text" value="120" disabled />
+                </label>
+              </div>
+            </section>
+
+            <section class="panel" id="userManagePanel">
+              <div class="panel-head">
+                <h4>用户管理</h4>
+                <button id="addUserBtn" class="ghost-btn" data-tip="管理员新建系统账号">新建用户</button>
+              </div>
+              <p class="sub">仅管理员可创建账号（admin/operator/personal）</p>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>用户名</th>
+                      <th>显示名称</th>
+                      <th>角色</th>
+                      <th>状态</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="userTable"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    
+    <div id="userModal" class="modal hidden">
+      <div class="modal-overlay" id="userModalOverlay"></div>
+      <article class="modal-card">
+        <header class="modal-head">
+          <h3 id="userModalTitle">新建用户</h3>
+          <button id="closeUserModalBtn" class="ghost-btn close-modal-btn">&times;</button>
+        </header>
+        <form id="userModalForm" class="modal-form">
+          <input type="hidden" id="modalUserId" value="" />
+          <label>用户名
+            <input type="text" id="modalUsername" placeholder="英文字母/数字/._-" required />
+          </label>
+          <label>显示名称
+            <input type="text" id="modalDisplayName" placeholder="例如: 张三" required />
+          </label>
+          <label>角色
+            <select id="modalRole" required>
+              <option value="personal">个人账号 (personal)</option>
+              <option value="operator">监视员 (operator)</option>
+              <option value="admin">管理员 (admin)</option>
+            </select>
+          </label>
+          <label>状态
+            <select id="modalActive" required>
+              <option value="true">启用</option>
+              <option value="false">禁用</option>
+            </select>
+          </label>
+          <label>密码
+            <input type="password" id="modalPassword" placeholder="至少8位" required />
+          </label>
+          <div class="modal-actions">
+            <button type="button" id="cancelUserModalBtn" class="ghost-btn">取消</button>
+            <button type="submit" class="action-btn">保存</button>
+          </div>
+        </form>
+      </article>
+    </div>
+
+    <script src="./config.js?v=20260414b"></script>
+    <script src="./app.js?v=20260513-stats-reset"></script>
+  </body>
+</html>
