@@ -90,7 +90,7 @@ jobs:
               `- \`${backendImage}\``,
               `- \`${frontendImage}\``,
               '',
-              '启动方式见仓库根目录的 `启动方式.md`。'
+              '启动方式见仓库根目录的 `README.md`。'
             ].join('\n');
             try {
               await github.rest.repos.createRelease({
