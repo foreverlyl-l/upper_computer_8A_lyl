@@ -111,9 +111,3 @@ http://localhost:5500
 ```text
 JBSWY3DPEHPK3PXP
 ```
-
-正式部署时请修改 `SECRET_KEY`、默认密码和 `ADMIN_TOTP_SECRET`。如果要使用 `ENVIRONMENT: production`，需要关闭默认账号初始化：
-
-```yaml
-AUTO_SEED_DEFAULT_USERS: "false"
-```
