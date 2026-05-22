@@ -1,6 +1,6 @@
-# 启动方式
+# upper_computer_8A_lyl
 
-## 方式一：使用已发布的 Docker 镜像
+## 使用已发布的 Docker 镜像
 
 新建 `docker-compose.yml`：
 
@@ -8,7 +8,7 @@
 name: access-console
 
 x-backend-env: &backend-env
-  ENVIRONMENT: production
+  ENVIRONMENT: development
   DEBUG: "false"
   ENABLE_DOCS: "false"
   DATABASE_URL: sqlite:////data/access_control.db
@@ -58,13 +58,13 @@ volumes:
   backend_data:
 ```
 
-通过启动：
+启动：
 
 ```powershell
 docker compose up -d
 ```
 
-前端页面会部署在：
+前端页面：
 
 ```text
 http://localhost:5500
@@ -76,7 +76,7 @@ http://localhost:5500
 docker compose down
 ```
 
-## 方式二：从源码本地构建
+## 从源码本地构建
 
 在仓库根目录运行：
 
@@ -106,8 +106,14 @@ http://localhost:5500
 密码：operator-docker-pass-123
 ```
 
-管理员登录需要动态验证码，默认密钥，通过google身份验证器或其他身份验证器获得动态密码：
+管理员登录需要动态验证码。默认密钥如下，可通过 Google 身份验证器或其他身份验证器生成动态密码：
 
 ```text
 JBSWY3DPEHPK3PXP
+```
+
+正式部署时请修改 `SECRET_KEY`、默认密码和 `ADMIN_TOTP_SECRET`。如果要使用 `ENVIRONMENT: production`，需要关闭默认账号初始化：
+
+```yaml
+AUTO_SEED_DEFAULT_USERS: "false"
 ```
